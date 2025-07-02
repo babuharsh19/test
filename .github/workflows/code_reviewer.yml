@@ -18,6 +18,9 @@ jobs:
       # Step 1: Check out the repository's code so the action can access it
       - name: Checkout Repository
         uses: actions/checkout@v4
+        # We need to fetch the full history to get the diff correctly
+        with:
+          fetch-depth: 0
 
       # Step 2: Set up Python environment
       - name: Set up Python
@@ -32,10 +35,12 @@ jobs:
           pip install requests
 
       # Step 4: Run the review script
-      # We pass the Gemini API key as a secret and the GitHub token and PR URL as environment variables
+      # We pass the Gemini API key and all necessary GitHub context as environment variables
       - name: Run Gemini Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_URL: ${{ github.event.pull_request.url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMIT_ID: ${{ github.event.pull_request.head.sha }}
         run: python .github/scripts/review.py

@@ -4,6 +4,7 @@ import os
 import requests
 import json
 import subprocess
+import re
 
 # --- Configuration ---
 # Get environment variables from the GitHub Actions workflow
@@ -27,7 +28,7 @@ def get_pr_diff():
     try:
         # Fetch the base branch of the pull request
         target_branch = os.environ.get('GITHUB_BASE_REF', 'main')
-        subprocess.run(['git', 'fetch', 'origin', target_branch], check=True)
+        subprocess.run(['git', 'fetch', 'origin', target_branch], check=True, capture_output=True)
 
         # Get the diff between the current commit and the target branch
         diff_command = ['git', 'diff', f'origin/{target_branch}...{COMMIT_ID}']
@@ -80,15 +81,24 @@ def get_review_from_gemini(diff):
         "contents": [{"parts": [{"text": prompt}]}]
     }
     headers = {'Content-Type': 'application/json'}
+    result_text = ""  # Initialize to ensure it's available in the except block
 
     try:
         response = requests.post(GEMINI_API_URL, headers=headers, data=json.dumps(payload))
         response.raise_for_status()
         result_text = response.json()['candidates'][0]['content']['parts'][0]['text']
 
-        # Clean the response to make it valid JSON
-        clean_json_text = result_text.strip().replace("```json", "").replace("```", "")
-        return json.loads(clean_json_text)
+        # **IMPROVED JSON PARSING**
+        # Use regex to find the JSON array within the response text.
+        # This is more robust than simple string stripping.
+        json_match = re.search(r'\[.*\]', result_text, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(0)
+            return json.loads(json_str)
+        else:
+            print("Error: No valid JSON array found in the Gemini response.")
+            print(f"Raw response from Gemini: {result_text}")
+            return None
 
     except requests.exceptions.RequestException as e:
         print(f"Error calling Gemini API: {e}")
@@ -96,7 +106,7 @@ def get_review_from_gemini(diff):
         return None
     except (KeyError, IndexError, json.JSONDecodeError) as e:
         print(f"Error parsing Gemini response: {e}")
-        print(f"Raw response from Gemini: {result_text}")
+        print(f"Raw response from Gemini that caused the error: {result_text}")
         return None
 
 

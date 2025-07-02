@@ -14,8 +14,8 @@ GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY")
 PR_NUMBER = os.environ.get("PR_NUMBER")
 COMMIT_ID = os.environ.get("COMMIT_ID")
 
-# Gemini API endpoint
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+# **FIXED** Gemini API endpoint with the correct model name
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
 
 
 # --- Helper Functions ---

@@ -8,11 +8,11 @@ import re
 
 # --- Constants and Configuration ---
 
-# The model to use for the review. gemini-1.5-pro-latest provides the highest quality analysis.
-GEMINI_MODEL_NAME = "gemini-1.5-pro-latest"
+# The model to use for the review. gemini-1.5-flash-latest provides the highest quality analysis.
+GEMINI_MODEL_NAME = "gemini-1.5-flash-latest"
 
 # The maximum number of characters to send in the diff.
-# The gemini-1.5-pro-latest model has a very large context window.
+# The gemini-1.5-flash-latest model has a very large context window.
 # 900k characters provide a large buffer.
 MAX_DIFF_CHARS = 900_000
 

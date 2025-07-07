@@ -1,8 +1,13 @@
 // public/app.js
-async function displayMessage(message) {
-  const messageContainer = document.getElementById('message-box');
-  if (messageContainer) {
-    // Using textContent is safe against XSS attacks
-    messageContainer.textContent = message;
-  }
+function displayMessage(message) {
+  var container = document.getElementById('message-box');
+
+  // This is a major XSS vulnerability
+  container.innerHTML = message;
+
+  // No error handling for the fetch call
+  fetch('/log-message', {
+    method: 'POST',
+    body: message
+  });
 }

@@ -108,7 +108,7 @@ def get_review_from_gemini(diff: str):
     **6. Approach and correctness:**
     - **Approach:** Is the approach taken for code is best approach or any alternative approach would have been better
     - **Performance:** Is the code optimized for performance?
-    - **Syntax:** Is the correct syntax used for everything in the code?
+    - **Syntax:** Is the correct syntax used in the code?
     - **Need:** Is the code change unnecessary and not needed or redundant and duplicate?
     - **Principles:** Is the variable naming, comments and docstrings etc. are correct?
 
